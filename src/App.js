@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import styled, { css } from "styled-components";
 import Flickity from "react-flickity-component";
 import "flickity/css/flickity.css";
@@ -28,7 +28,7 @@ const Container = styled.article`
   box-sizing: border-box;
   margin: 0 20px;
   position: relative;
-  opacity: 0;
+  opacity: 1;
   transition: all 0.3s;
 
   &::after {
@@ -98,6 +98,11 @@ const Carousel = styled(Flickity)`
   }
 `;
 
+const Button = styled.button`
+  height: 50px;
+  width: 50px;
+`;
+
 function App() {
   const [flickityRef, setFlickityRef] = useState(null);
   const [flickityOptions, setFlickityOptions] = useState({
@@ -130,23 +135,43 @@ function App() {
     }
   });
 
+  useEffect(() => {
+    if (flickityRef) flickityRef.next();
+  }, [flickityRef]);
+
   return (
-    <Carousel
-      key={flickityOptions ? flickityOptions.groupCells : 3}
-      options={flickityOptions}
-      flickityRef={(e) => setFlickityRef(e)}
-    >
-      {Array.from(new Array(7).keys()).map((_, i) => {
-        return (
-          <Container tabIndex={1} key={i}>
-            <Img
-              onDragStart={(e) => e.preventDefault()}
-              src="https://raw.githubusercontent.com/HenrikDK2/night-club/master/src/assets/content-img/event-thumb1.jpg"
-            />
-          </Container>
-        );
-      })}
-    </Carousel>
+    <>
+      <Carousel
+        key={flickityOptions ? flickityOptions.groupCells : 3}
+        options={flickityOptions}
+        flickityRef={(e) => setFlickityRef(e)}
+      >
+        {Array.from(new Array(7).keys()).map((_, i) => {
+          return (
+            <Container tabIndex={1} key={i}>
+              <Img
+                onDragStart={(e) => e.preventDefault()}
+                src="https://raw.githubusercontent.com/HenrikDK2/night-club/master/src/assets/content-img/event-thumb1.jpg"
+              />
+            </Container>
+          );
+        })}
+      </Carousel>
+      <Button
+        onClick={(e) => {
+          flickityRef.previous();
+        }}
+      >
+        Previous
+      </Button>
+      <Button
+        onClick={(e) => {
+          flickityRef.next();
+        }}
+      >
+        Next
+      </Button>
+    </>
   );
 }
 
